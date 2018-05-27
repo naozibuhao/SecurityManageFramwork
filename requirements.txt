@@ -1,6 +1,6 @@
 amqp==1.4.9
 anyjson==0.3.3
-celery==3.1.25
+celery
 billiard==3.3.0.23
 certifi==2018.4.16
 chardet==3.0.4
