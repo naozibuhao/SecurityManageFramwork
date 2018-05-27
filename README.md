@@ -64,6 +64,6 @@
 
 ####  备注
 如基础环境安装出现问题，请参考个人以下链接
-  https://my.oschina.net/u/3867729/blog/1819486        //python3安装
-  https://my.oschina.net/u/3867729/blog/1819491        //rabbitmq安装
-  https://my.oschina.net/u/3867729/blog/1819492        //防火墙设置
+  <br>https://my.oschina.net/u/3867729/blog/1819486        //python3安装
+  <br>https://my.oschina.net/u/3867729/blog/1819491        //rabbitmq安装
+  <br>https://my.oschina.net/u/3867729/blog/1819492        //防火墙设置
