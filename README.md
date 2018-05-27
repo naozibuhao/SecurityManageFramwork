@@ -61,3 +61,9 @@
 1.  本项目当前仅自己维护，希望有志之士可协助完善系统，详情可加入qq群，联系群主即可
     ![qq交流群](https://gitee.com/uploads/images/2018/0527/114130_0e8d0451_1390378.png "屏幕截图.png")
 2.  如有其他定制化需求，可发邮件至gy071089@outlook.com联系我
+
+####  备注
+如基础环境安装出现问题，请参考个人以下链接
+  https://my.oschina.net/u/3867729/blog/1819486        //python3安装
+  https://my.oschina.net/u/3867729/blog/1819491        //rabbitmq安装
+  https://my.oschina.net/u/3867729/blog/1819492        //防火墙设置
