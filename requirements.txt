@@ -1,12 +1,7 @@
-amqp==1.4.9
 anyjson==0.3.3
-celery
-billiard==3.3.0.23
-certifi==2018.4.16
+celery==4.1.1
 chardet==3.0.4
 Django==2.0.4
-idna==2.6
-kombu==3.0.37
 PyMySQL==0.8.0
 python-nmap==0.6.1
 pytz==2018.4
