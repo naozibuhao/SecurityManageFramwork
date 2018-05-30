@@ -35,6 +35,7 @@
     python manage.py createsuperuser    //创建超级管理员
     python initdata.py        //初始化数据库，主要生成角色，权限等信息
     python cnvd_xml.py        //用于同步cnvd漏洞数据文件，文件位于cnvd_xml目录下，可自行调整，该文件夹每周更新一次，
+    celery -A SeMF worker -l info    //用于开启消费者，执行异步任务
     python manage.py runserver 0.0.0.0:8000    //运行成功，访问即可
     
     如需使用周期巡检和漏洞同步功能，需前往
