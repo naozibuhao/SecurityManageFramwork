@@ -63,7 +63,7 @@
 2.  如有其他定制化需求，可发邮件至gy071089@outlook.com联系我
 
 ####  备注
-如基础环境安装出现问题，请参考个人以下链接
+如基础环境安装出现问题，请参考以下链接
   <br>https://my.oschina.net/u/3867729/blog/1819486        //python3安装
   <br>https://my.oschina.net/u/3867729/blog/1819491        //rabbitmq安装
   <br>https://my.oschina.net/u/3867729/blog/1819492        //防火墙设置
