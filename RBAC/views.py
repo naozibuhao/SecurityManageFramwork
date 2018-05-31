@@ -81,11 +81,8 @@ def regist(request,argu):
                             area=area,
                             request_type=request_type,
                             )
-                        res = mails.sendregistmail(email, urlarg)
-                        if res:
-                            error = '申请成功，审批通过后会向您发送邮箱'
-                        else:
-                            error = '邮件发送失败，请重试'
+                        #res = mails.sendregistmail(email, urlarg)
+                        error = '申请成功，审批通过后会向您发送邮箱'
             else:
                 error ='请检查输入'
         else:
@@ -199,15 +196,6 @@ def resetpasswd(request,argu = 'resetpsd'):
             return render(request,'RBAC/resetpsd.html',{'form':form,'error':error,'title':'重置'})
                         
                         
-                    
-                    
-                
-            
-            
-                
-
-
-
 
 @login_required
 @csrf_protect
@@ -408,7 +396,7 @@ def userregistaction(request):
         regist_id = request.POST.get('request_id')
         action = request.POST.get('action')
         userregist = get_object_or_404(models.UserRequest,id = regist_id)
-        if userregist.is_use:
+        if userregist.is_check:
             error = '请勿重复审批'
         else:
             if action == 'access':
@@ -483,7 +471,8 @@ def userregisttable(request):
             if userrequest.is_check:
                 dic['is_check'] = '已审批'
                 dic['starttime'] = userrequest.starttime
-                dic['action_user'] = userrequest.action_user.username
+                if userrequest.action_user:
+                    dic['action_user'] = userrequest.action_user.username
                 dic['updatetime'] = userrequest.updatetime
             else:
                 dic['is_check'] = '待审批'
