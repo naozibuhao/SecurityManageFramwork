@@ -39,3 +39,14 @@ class Scanner(models.Model):
     
     def __str__(self):
         return self.scanner_name
+    
+    
+class ScannerPolicies(models.Model):
+    policies_name = models.CharField('策略名称',max_length=50)
+    scanner = models.ForeignKey(Scanner,verbose_name='节点关联',related_name='police_for_scanner',on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return self.policies_name
+    
+    
+    

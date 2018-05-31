@@ -18,10 +18,18 @@ class UserRequestForm(ModelForm):
         fields = ['email','area','request_type']
         widgets = {
                    'email':widgets.TextInput(attrs={'class':'layui-input','placeholder':'邮箱地址'}),
-                   'area':widgets.Select(attrs={'class':'layui-input'}),
-                   'request_type':widgets.Select(attrs={'class':'layui-input'})
+                   'area':widgets.Select(attrs={'class':'layui-input','placeholder':'所属区域'}),
+                   'request_type':widgets.Select(attrs={'class':'layui-input','placeholder':'账号类型'}),
                    }
 
+class ResetpsdRequestForm(forms.Form):
+        email = forms.CharField(label='邮箱',max_length=25,widget=forms.TextInput(attrs={'class':'layui-input','placeholder':'邮箱地址'}))
+
+
+class ResetpsdForm(forms.Form):
+        email = forms.CharField(label='邮箱',max_length=25,widget=forms.TextInput(attrs={'class':'layui-input','placeholder':'邮箱地址'}))
+        password = forms.CharField(label='新密码',max_length=25,widget=forms.PasswordInput(attrs={'class':'layui-input','placeholder':'新密码'}))
+        repassword = forms.CharField(label='新密码',max_length=25,widget=forms.PasswordInput(attrs={'class':'layui-input','placeholder':'新密码'})) 
 
 class SigninForm(forms.Form):
     username = forms.CharField(label='账号',max_length=75,widget=forms.TextInput(attrs={'class':'layui-input','placeholder':'用户名/邮箱前缀'}))

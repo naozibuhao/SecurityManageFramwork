@@ -65,7 +65,7 @@ class UserRequest(models.Model):
     status = models.CharField('审批状态',max_length=50,default='0',choices=REQUEST_STATUS)
     is_check = models.BooleanField('是否审批',default=False)
     is_use = models.BooleanField('是否使用',default=False)
-    request_type = models.ForeignKey(Role,verbose_name=u'申请类型',related_name='userrequest_role',on_delete=models.CASCADE)
+    request_type = models.ForeignKey(Role,verbose_name=u'账号权限',related_name='userrequest_role',on_delete=models.CASCADE)
     starttime = models.DateTimeField('申请时间',auto_now_add=True)
     updatetime = models.DateTimeField('审批时间',auto_now=True)
     
@@ -80,7 +80,6 @@ class UserResetpsd(models.Model):
     email = models.EmailField('申请邮箱')
     urlarg = models.CharField('重置参数',max_length=50)
     is_check = models.BooleanField('是否使用',default=False)
-    request_type = models.ForeignKey(Role,verbose_name=u'申请类型',related_name='userresetpsd_role',on_delete=models.CASCADE)
     updatetime = models.DateField('更新时间',auto_now=True)
     def __str__(self):
         return self.email

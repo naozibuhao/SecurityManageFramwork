@@ -60,3 +60,20 @@ def send_notice_mail(email,data):
     except:
         return False
     
+def sendresetpsdmail(email,argu):
+    data={'subject':'SeMF账号密码重置',
+          'text_content':'',
+          'html_content':''}
+    data['text_content'] = "您正在申请重置SeMF平台账号，请前往以下地址处理："+ url +"/view/resetpsd/"+argu +"  如无执行重置操作，请忽略该邮件"
+    data['html_content'] = """
+    <p>Dear user:</p>
+    <p>    您正在申请重置SeMF的密码，请前往以下地址进行密码重置，<a href='"""+ url +"/view/resetpsd/"+argu +"""'>点我</a>以完成密码重置</p>
+    <p>    如点击失效，请前往访问以下地址""" + url +"/view/resetpsd/"+argu + """</p>
+    <p>    如非本人操作，忽略该邮件</p>
+    <p>    本邮件为安全管控平台SeMf系统邮件，请勿回复</p>
+    """
+    res = sendmails(email,data)
+    if res:
+        return True
+    else:
+        return False

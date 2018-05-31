@@ -16,7 +16,9 @@
 	
 	    <script src="{% static 'jquery/jquery-3.3.1.min.js' %}"></script> <!-- jQuery Library -->
 	    <script src="{% static 'lib/layui/layui.js' %}" charset="utf-8"></script>
+	    <script src="{% static 'js/xadmin.js' %}"></script>
 	    <script src="{% static 'js/bootstrap.min.js' %}" charset="utf-8"></script>
+		
 	    
 	
 	</head>
@@ -41,10 +43,10 @@
 		            <hr class="hr20" >
 		            <div class="layui-row">
 		            	<div class="layui-col-xs6">
-			            	<span><a href="#">忘记密码？密码重置</a></span>
+			            	<span><a href="{% url 'resetpsds' 'resetpsd' %}">忘记密码？密码重置</a></span>
 			            </div>
 			            <div class="layui-col-xs6" align='right'>
-				     		<span><a href="#" onclick="alert('暂不提供，如需账号，请联系管理员'); return false;">新用户？账号申请</a></span>
+			            	<span><a href="{% url 'regist' 'regist' %}" >新用户？账号申请</a></span>
 				     	</div>
 			     	</div>
 		        </form>

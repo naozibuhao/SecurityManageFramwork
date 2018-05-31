@@ -9,7 +9,10 @@ from django.contrib.auth.models import User
 import django.utils.timezone as timezone
 from django.contrib import auth
 import datetime,json
+from SeMFSetting.Functions.checkpsd import checkpsd
 from . import forms,models
+import hashlib 
+from django.contrib.auth.hashers import make_password 
 from SeMFSetting.views import paging,strtopsd
 from SeMFSetting.Functions import mails
 from ArticleManage.models import Article
@@ -56,44 +59,154 @@ def dashboard(request):
 @csrf_protect
 def regist(request,argu):
     error = ''
-    regist_get = get_object_or_404(models.UserRequest,urlarg=argu,is_use=False)
-    if request.method == 'POST':
-        form = forms.Account_Reset_Form(request.POST)
-        if form.is_valid():
-            email = form.cleaned_data['email']
-            firstname = form.cleaned_data['firstname']
-            lastname = form.cleaned_data['lastname']
-            password = form.cleaned_data['password']
-            repassword = form.cleaned_data['repassword']
-            username = email.split("@")[0]
-            if regist_get.email == email:
-                if password == repassword:
-                    user_create = auth.authenticate(username = username,password = password)
-                    if user_create:
-                        error = '用户已存在'
-                    else:
-                        user_create = User.objects.create_user(
-                            first_name = firstname,
-                            last_name = lastname,
-                            username=username,
-                            password=password,
-                            email=email,
-                           )
-                        user_create.profile.roles.add(regist_get.request_type)
-                        user_create.profile.area=regist_get.area
-                        user_create.save()
-                        regist_get.is_use=True
-                        regist_get.save()
-                        return HttpResponseRedirect('/view/')
+    if argu == 'regist':
+        if request.method == 'POST':
+            form = forms.UserRequestForm(request.POST)
+            if form.is_valid():
+                email = form.cleaned_data['email']
+                user_get = User.objects.filter(username=email)
+                if user_get:
+                    error = '用户已存在'
                 else:
-                    error = '两次密码不一致'
+                    userregist_get = models.UserRequest.objects.filter(email = email)
+                    if userregist_get.count()>2:
+                        error = '用户已多次添加'
+                    else:
+                        area = form.cleaned_data['area']
+                        request_type = form.cleaned_data['request_type']
+                        urlarg = strtopsd(email)
+                        models.UserRequest.objects.get_or_create(
+                            email=email,
+                            urlarg=urlarg,
+                            area=area,
+                            request_type=request_type,
+                            )
+                        res = mails.sendregistmail(email, urlarg)
+                        if res:
+                            error = '申请成功，审批通过后会向您发送邮箱'
+                        else:
+                            error = '邮件发送失败，请重试'
             else:
-                error = '恶意注册是不对滴'
+                error ='请检查输入'
         else:
-            error = '请检查输入'
+            form = forms.UserRequestForm()
+        return render(request,'RBAC/registrequest.html',{'form':form,'error':error})
     else:
-        form = forms.Account_Reset_Form()
-    return render(request,'RBAC/regist.html',{'form':form,'error':error})
+        regist_get = get_object_or_404(models.UserRequest,urlarg=argu,is_use=False)
+        if request.method == 'POST':
+            form = forms.Account_Reset_Form(request.POST)
+            if form.is_valid():
+                email = form.cleaned_data['email']
+                firstname = form.cleaned_data['firstname']
+                lastname = form.cleaned_data['lastname']
+                password = form.cleaned_data['password']
+                repassword = form.cleaned_data['repassword']
+                username = email.split("@")[0]
+                check_res = checkpsd(password)
+                if check_res:
+                    if regist_get.email == email:
+                        if password == repassword:
+                            user_create = auth.authenticate(username = username,password = password)
+                            if user_create:
+                                error = '用户已存在'
+                            else:
+                                user_create = User.objects.create_user(
+                                    first_name = firstname,
+                                    last_name = lastname,
+                                    username=username,
+                                    password=password,
+                                    email=email,
+                                   )
+                                user_create.profile.roles.add(regist_get.request_type)
+                                user_create.profile.area=regist_get.area
+                                user_create.save()
+                                regist_get.is_use=True
+                                regist_get.save()
+                                return HttpResponseRedirect('/view/')
+                        else:
+                            error = '两次密码不一致'
+                    else:
+                        error = '密码必须6位以上且包含字母、数字'
+                else:
+                    error = '恶意注册是不对滴'
+            else:
+                error = '请检查输入'
+        else:
+            form = forms.Account_Reset_Form()
+        return render(request,'RBAC/regist.html',{'form':form,'error':error})
+
+@csrf_protect
+def resetpasswd(request,argu = 'resetpsd'):
+    error = ''
+    if argu =='resetpsd':
+        if request.method == 'POST':
+            form = forms.ResetpsdRequestForm(request.POST)
+            if form.is_valid():
+                email = form.cleaned_data['email']
+                user = get_object_or_404(User,email=email)
+                if user:
+                    hash_res = hashlib.md5()
+                    hash_res.update(make_password(email).encode('utf-8'))
+                    urlarg = hash_res.hexdigest()
+                    models.UserResetpsd.objects.get_or_create(
+                        email=email,
+                        urlarg=urlarg
+                        )
+                    res = mails.sendresetpsdmail(email,urlarg)
+                    if res:
+                        error = '申请已发送，请检查邮件通知，请注意检查邮箱'
+                    else:
+                        error = '重置邮件发送失败，请重试'
+                else:
+                    error ='请检查信息是否正确'
+            else:
+                error ='请检查输入'
+        else:
+            form = forms.ResetpsdRequestForm()
+        return render(request,'RBAC/resetpsdquest.html',{'form':form,'error':error})
+    else:
+        resetpsd = get_object_or_404(models.UserResetpsd,urlarg=argu)
+        if resetpsd:
+            email_get = resetpsd.email
+            if request.method == 'POST':
+                form = forms.ResetpsdForm(request.POST)
+                if form.is_valid():
+                    email = form.cleaned_data['email']
+                    password = form.cleaned_data['password']
+                    repassword = form.cleaned_data['repassword']
+                    if checkpsd(password):
+                        if password==repassword:
+                            if email_get==email:
+                                user = get_object_or_404(User,email=email)
+                                if user:
+                                    user.set_password(password)
+                                    user.save()
+                                    resetpsd.delete()
+                                    return HttpResponseRedirect('/view/')
+                                    
+                                else:
+                                    error = '用户信息有误'
+                            else:
+                                error = '用户邮箱不匹配'
+                        else:
+                            error = '两次密码不一致'
+                    else:
+                        error = '密码必须6位以上且包含字母、数字'
+                else:
+                    error = '请检查输入'
+            else:
+                form = forms.ResetpsdForm()
+            return render(request,'RBAC/resetpsd.html',{'form':form,'error':error,'title':'重置'})
+                        
+                        
+                    
+                    
+                
+            
+            
+                
+
+
 
 
 @login_required
@@ -137,20 +250,23 @@ def changepsd(request):
             new_password = form.cleaned_data['new_password']
             re_new_password = form.cleaned_data['re_new_password']
             username = request.user.username 
-            if new_password and new_password == re_new_password:
-                if old_password:
-                    user = auth.authenticate(username = username,password = old_password)
-                    if user:
-                        user.set_password(new_password)
-                        user.save()
-                        auth.logout(request)
-                        error = '修改成功'
+            if checkpsd(new_password):
+                if new_password and new_password == re_new_password:
+                    if old_password:
+                        user = auth.authenticate(username = username,password = old_password)
+                        if user:
+                            user.set_password(new_password)
+                            user.save()
+                            auth.logout(request)
+                            error = '修改成功'
+                        else:
+                            error = '账号信息错误'
                     else:
-                        error = '账号信息错误'
+                        error = '请检查原始密码'
                 else:
-                    error = '请检查原始密码'
+                    error = '两次密码不一致'
             else:
-                error = '两次密码不一致'
+                error = '密码必须6位以上且包含字母、数字'
         else:
             error = '请检查输入'
         return render(request,'formedit.html',{'form':form,'post_url':'changepsd','error':error})
