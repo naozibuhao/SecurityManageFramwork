@@ -18,7 +18,7 @@
 
 #### 安装教程
 
-1. 准备centos7系统，安装python3，mysql（选用），rabbitmq，namp，安装方法可参照本页底部的备注
+1. 准备centos7系统，安装python3，mysql（选用），rabbitmq，nmap，安装方法可参照本页底部的备注
     
 2. 下载解压本项目，并切换到项目路径，修改项目setting.py文件，根据需要设置 发件邮箱、rabbitmq参数以及数据库信息
     ```
