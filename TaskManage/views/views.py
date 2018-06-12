@@ -7,7 +7,7 @@ from django.views.decorators.csrf import csrf_protect
 from SeMFSetting.views import paging
 from django.http import JsonResponse
 from .. import models,forms
-from .Nessustasks import sys_action
+from TaskManage.views.Scantasks import sys_action,web_action
 import time
 
 
@@ -109,11 +109,14 @@ def task_action(request,task_id,action):
             res = sys_action(request,task,action)
             if res:
                 error ='执行成功'
-                
             else:
                 error = '操作失误，请联系管理员'
         elif task.task_scanner.scanner_type == 'AWVS':
-            error = '暂未提供该类任务'
+            res = web_action(request,task,action)
+            if res:
+                error ='执行成功'
+            else:
+                error = '操作失误，请联系管理员'
         elif task.task_scanner.scanner_type == 'MobSF':
             error = '暂未提供该类任务'
     else:
@@ -207,7 +210,7 @@ def tasktablelist(request):
             task_type__icontains = key,
             task_type__in = tasktype,
             task_status__in = taskstatus
-            ).order_by('task_status','task_endtime')
+            ).order_by('task_status','-task_endtime')
     else:
         task_list = models.Task.objects.filter(
             task_user = user,
@@ -215,7 +218,7 @@ def tasktablelist(request):
             task_type__icontains = key,
             task_type__in = tasktype,
             task_status__in = taskstatus
-            ).order_by('task_status','task_endtime')
+            ).order_by('task_status','-task_endtime')
         
     total = task_list.count()
     task_list = paging(task_list,rows,page)
