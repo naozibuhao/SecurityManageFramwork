@@ -132,29 +132,33 @@ def TaskSync(request):
         if request.method == 'POST':
             form = forms.TaskSyncForm(request.POST,request.FILES)
             if form.is_valid():
-                try:
-                    num_id =models.Task.objects.latest('id').id
-                except:
-                    num_id = 0
-                num_id += 1
-                task_id = str('s') + time.strftime('%Y%m%d',time.localtime(time.time())) + str(num_id)
-                task_name = form.cleaned_data['task_name']
-                task_type = '扫描同步'
                 task_scanner = form.cleaned_data['task_scanner']
-                scan_id = form.cleaned_data['scan_id']
-                task_targetinfo = form.cleaned_data['task_targetinfo']
-                
-                models.Task.objects.get_or_create(
-                    task_id=task_id,
-                    task_name=task_name,
-                    task_type=task_type,
-                    task_scanner=task_scanner,
-                    scan_id=scan_id,
-                    task_status ='1',
-                    task_user = user,
-                    task_targetinfo=task_targetinfo
-                    )
-                error = '创建成功'
+                if task_scanner.scanner_type == 'Nessus':
+                    try:
+                        num_id =models.Task.objects.latest('id').id
+                    except:
+                        num_id = 0
+                    num_id += 1
+                    task_id = str('s') + time.strftime('%Y%m%d',time.localtime(time.time())) + str(num_id)
+                    task_name = form.cleaned_data['task_name']
+                    task_type = '扫描同步'
+                    
+                    scan_id = form.cleaned_data['scan_id']
+                    task_targetinfo = form.cleaned_data['task_targetinfo']
+                    
+                    models.Task.objects.get_or_create(
+                        task_id=task_id,
+                        task_name=task_name,
+                        task_type=task_type,
+                        task_scanner=task_scanner,
+                        scan_id=scan_id,
+                        task_status ='1',
+                        task_user = user,
+                        task_targetinfo=task_targetinfo
+                        )
+                    error = '创建成功'
+                else:
+                    error = '扫描节点不支持导入'
         else:
             form = forms.TaskSyncForm()
         return render(request,'formedit.html',{'form':form,'post_url':'tasksync','error':error})
