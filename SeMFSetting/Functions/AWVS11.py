@@ -117,8 +117,6 @@ def getscanid(target_id,scanner_id):
         if scan['target_id'] == target_id:
             scan_id = scan['scan_id']
             return scan_id
-    if scan_id:
-        return scan_id
 
 
 def getstatus(scan_id,scanner_id):
