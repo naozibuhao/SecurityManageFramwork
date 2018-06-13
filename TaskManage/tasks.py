@@ -21,7 +21,7 @@ from SeMFSetting.Functions.mails import send_notice_mail
 
 @shared_task
 def save_scan_vulns(scan_id,task_id):
-    task = Task.objects.filter(id =task_id ).first()
+    task = Task.objects.filter(task_id =task_id ).first()
     while True:
         res = Nessus.details(scan_id,task.task_scanner.id)
         try:

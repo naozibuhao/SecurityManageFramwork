@@ -110,7 +110,7 @@ def sys_action(request,task,action):
         if do_res:
             nessus_scan.task_status=2
             nessus_scan.save()
-            save_scan_vulns.delay(scan_id,task.id)
+            save_scan_vulns.delay(scan_id,task.task_id)
             #save_scan_vulns(scan_id,task)
         else:
             error = '操作失误，请重试'
@@ -154,7 +154,7 @@ def web_action(request,task,action):
         web_scan.task_status=2
         web_scan.scan_id=scan_id
         web_scan.save()
-        save_awvs_vulns.delay(scan_id,task)
+        save_awvs_vulns.delay(scan_id,task.task_id)
         #save_awvs_vulns(scan_id,task)
     elif action == 'stop':
         scan_id = web_scan.scan_id
