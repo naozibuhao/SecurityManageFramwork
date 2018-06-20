@@ -19,7 +19,10 @@ def nmap_host_all(host):
     nm = nmap.PortScanner()
     nm.scan(host,'0-65535')
     if nm[host].state()== 'up':
-        return nm[host]['tcp']
+        try:
+            return nm[host]['tcp']
+        except:
+            return 0
     
 #获取指定网段内全部存活主机
 def nmap_alive_lists(segment):
